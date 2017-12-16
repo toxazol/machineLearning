@@ -10,9 +10,9 @@ products.
 > A popular approach to similarity-based classification is to treat the given dissimilarities as distances in some Euclidean space.
 
 > **Nearest neighbor classifiers**
-Algorithm takes training sample *X^l*, object *u* that needs to be classified and optionally some parameters for weight funcion as input and outputs label (class) predicted for *u*. Algorithm sorts trainig sample by distance (similarity) to classified object in ascending order (so objects from trainig set with less *i* are closer to *u*). Object label is found as an argument that maximizes the sum of weight functions:
+take training sample, object *u* that needs to be classified and optionally some parameters for weight funcion as input and outputs label (class) predicted for *u*. Algorithm sorts trainig sample by distance (similarity) to classified object in ascending order (so objects from trainig set with less *i* are closer to *u*). Object label is found as an argument that maximizes the sum of weight functions:
 
-[!nn]()
+[!nn](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2015-30-24.png)
 
 As calculations are delayed until *u* is known nearest neighbor classifier refers to *lazy learning* methods. Varying the weight function different similarity-based classifiers can be obtained.
 
