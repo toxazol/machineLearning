@@ -21,7 +21,7 @@
 Рассматривается алгоритм отбара эталонных объектов STOLP.
 Оптимальные параметры алгоритмов обучения подбираются по критерию скользящего контроля LOO (leave one out). Также кросс-контроль LOO применяется для эмпирического оценивания (generalization ability, generalization performance) алгоритмов.
 
-## Метод k ближайших соседей
+## k nearest neighbors algorithm
 На вход алгоритма подается обучающая выборка, классифицируемый объект ***u*** и параметр ***k***. Алгоритм сортирует обучающую выборку по возрастанию расстояния до ***u*** , т.е. вычисления откладываются до момента, пока не станет известен классифицируемый объект ***u***. Такие алгоритмы относятся к методам ленивого обучения (lazy learning). Объекту присваивается класс, к которому относится большинство ближайших соседей (целесообразно выбирать нечетное k).
 
 ![kNN](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2012-21-22.png?raw=true)
@@ -55,27 +55,6 @@ metricClassifier <- function(trainSet, u, metric = dst1, method = 'knn', k, h, k
     return(c(labels[which.max(labelCount)], max(labelCount)))
   }
 }
-STOLP <- function(set, threshold, err, metric = dst1, method = 'knn', k, h = 1, ker = ker1){
-  rowsNum <- dim(set)[1]
-  varsNum <- dim(set)[2]-1
-  toDelete = numeric()
-  labelsNum = levels(set[rowsNum,varsNum+1])
-  maxRes = numeric(labelsNum)
-  maxLabel = numeric(labelsNum)
-  
-  for(i in rowsNum:1){
-    res = metricClassifier(set, set[i, 1:varsNum], metric, method, k, h, ker)
-    if(res[1] != set[i, varsNum+1]){
-      toDelete <- c(toDelete, i)
-    }
-    else if(res[2] > maxRes[res[1]]){
-      maxRes[res[1]] = res[2]
-      maxLabel[res[1]] = i
-    }
-  }
-  resSet = set[-toDelete, ]
-  return(resSet)
-}
 ```
 Parameter ***k*** is found through empirical risk minimization utilizing **LOO** cross-validation. 
 > **LOO** - (leave one out) is a procedure of empirical evaluation of classification algorithm quality. Sample is being divided into a test set consisting of a single element and a training set comprising all other elements for every element in this sample. It outputs the sum of errors (wrong classification cases) divided by total number of tests (number of elements in the sample).
@@ -106,7 +85,7 @@ LOO <- function(classifier, k, h){
 And here is optimal *k* found by LOO:
 > **kNN + LOO chart**
 > 
-### k weighted nearest neighbors algorithm
+## k **weighted** nearest neighbors algorithm
 ![kwNN](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2012-56-36.png?raw=true)
 
 > *ω(i)* is a monotonically decreasing sequence of real-number weights, specifying contribution of *i-th* neighbor in *u* classification.
@@ -115,9 +94,11 @@ Such sequence can be obtained as geometric sequence with scale factor *q*. Where
 
 > **kwNN + LOO chart**
 
+
 ##Parzen window algorithm
 Let' s define *ω(i, u)* as a function of distance rather than neighbor rank.
 ![parzenw](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2013-27-53.png?raw=true) 
+
 where *K(z)* is  nonincreasing on [0, ∞)  kernel function. Then our metric classifier will look like this:
 
 ![parzen](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2013-31-51.png?raw=true)
