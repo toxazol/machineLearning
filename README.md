@@ -95,7 +95,7 @@ Such sequence can be obtained as geometric sequence with scale factor *q*. Where
 > **kwNN + LOO chart**
 
 
-##Parzen window algorithm
+## Parzen window algorithm
 Let' s define *ω(i, u)* as a function of distance rather than neighbor rank.
 ![parzenw](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2013-27-53.png?raw=true) 
 
