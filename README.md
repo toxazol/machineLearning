@@ -4,10 +4,10 @@
 the test sample and a set of labeled training samples, and the pairwise similarities between the
 training samples. 
 
-> Similarity functions `ρ(x;y)`
+Similarity functions `ρ(x;y)`
 may be asymmetric and fail to satisfy the other mathematical properties required for metrics or inner
 products.
-> A popular approach to similarity-based classification is to treat the given dissimilarities as distances in some Euclidean space.
+A popular approach to similarity-based classification is to treat the given dissimilarities as distances in some Euclidean space.
 
 > **Nearest neighbor classifiers**
 take training sample, object *u* that needs to be classified and optionally some parameters for weight funcion as input and outputs label (class) predicted for *u*. Algorithm sorts trainig sample by distance (similarity) to classified object in ascending order (so objects from trainig set with less *i* are closer to *u*). Object label is found as an argument that maximizes the sum of weight functions:
@@ -24,14 +24,16 @@ Some of them will be considered here:
 	 - Parzen window algorithm with variable window width
  3. Potential funcion algorithm
 
-Algorithms will be tested on standard **R** *iris* data set (Fisher's Iris data set). For simplicity and convinient graphical representableness only sepal width and sepal length features are considered as best separating the data set.
+Algorithms will be tested on standard **R** *iris* data set (Fisher's Iris data set). To provide convinient graphical representation only sepal width and sepal length features are plotted as best separating the data set.
+However algorithms are tested on a full feature set.
 
 Also data compression methods will be observed by the example of STOLP algorithm.
 At the end presented algorithms are compared in terms of generalization performance.
 
 ## k nearest neighbor algorithm
 Parameter k is introduced and weight function looks like this:
-*ω(i, u) = [i <= k]*. It means it returns 1 if i is less or equal to k and 0 otherwise.
+`ω(i, u) = [i <= k]`. It means it returns 1 if *i* is less or equal to *k* and 0 otherwise.
+In other words *u* gets the label of majority among its k nearest neigbors:
 
 ![kNN](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2012-21-22.png?raw=true)
 
@@ -49,11 +51,16 @@ metricClassifier <- function(trainSet, u, metric = dst1, method = 'knn', k, h, k
   orderedDist <- distances[order(distances[, 2]), ]
   
   if(method == 'knn'){
-    kNNeighbors <- orderedDist[1:k,1] #orderedDist[1:k-1,1]
-    #lst <- orderedDist[k,2]
-    #kNNeighbors <- unlist(list(kNNeighbors, orderedDist[orderedDist$V2==lst,1])) # count neighbours \w same dst as lst
-    countTable <- table(kNNeighbors)
-    return(c(labels[which.max(countTable)], max(countTable)))
+    while(TRUE){
+      kNNeighbors <- orderedDist[1:k-1,1]
+      lst <- orderedDist[k,2]
+      kNNeighbors <- unlist(list(kNNeighbors, orderedDist[orderedDist$V2==lst,1])) # count neighbours \w same dst as lst
+      countTable <- table(kNNeighbors)
+      if(length(countTable[countTable == max(countTable)])==1)
+        return(c(labels[which.max(countTable)], max(countTable)))
+      k = k-1
+    }
+    
   }
   if(method == 'parzen'){
     if(!is.na(k)) h = orderedDist[k+1, 2]
@@ -65,35 +72,51 @@ metricClassifier <- function(trainSet, u, metric = dst1, method = 'knn', k, h, k
   }
 }
 ```
+Slight modifications are made to the algorithm to improve stability. Instead of k nearest neigbors k closest distances are counted. If numbers of votes for some classes are equal k is decreased.
+
 Parameter ***k*** is found through empirical risk minimization utilizing **LOO** cross-validation. 
 > **LOO** - (leave one out) is a procedure of empirical evaluation of classification algorithm quality. Sample is being divided into a test set consisting of a single element and a training set comprising all other elements for every element in this sample. It outputs the sum of errors (wrong classification cases) divided by total number of tests (number of elements in the sample).
 
 Here is **R** implementation:
 ```R
-LOO <- function(classifier, k, h){
-  minErr <- 150
-  bestK = 0
-  for(k in 1:30){
+LOO <- function(classifier, dataSet, paramName, paramRange){
+  rows <- dim(dataSet)[1]
+  cols <- dim(dataSet)[2]-1
+  risks <- vector('numeric', length(paramRange))
+  minErr <- rows
+  bestParam = 0
+  i = 0
+  for(param in paramRange){
     err = 0
-    for(i in 1:150){
-      class <- metricClassifier(irisPetals[-i, ], irisPetals[i, 1:2], k=k)[1]
-      if(class != iris[i,5])
+    for(i in 1:rows){
+      classifierArgs = list(dataSet[-i, ], dataSet[i, 1:cols])
+      classifierArgs[paramName] = param
+      class <- do.call(classifier, classifierArgs)[1]
+      if(class != dataSet[i,cols+1])
         err <- err+1
     }
     if(err < minErr){
       minErr = err
-      bestK = k
+      bestParam = param
     }
-    message("current k: ", k)
+    risks[i] = err/rows
+    i = i+1
+    message(paste("current ", paramName, " = ", sep=''), param, " out of ", paramRange[length(paramRange)])
   }
-  message("best k: ", bestK)
-  message("error: ", minErr)
-  return(error/total)
+  message(paste("best ", paramName, ": ", sep=''), bestParam)
+  message("errors made: ", minErr)
+  message("empirical risk: ", minErr/rows)
+  plot(paramRange, risks, xlab='k', ylab='LOO', col='red', type='l')
+  points(bestParam, risks[bestParam], bg='red', col='red', pch=21)
+  text(bestParam, risks[bestParam], paste(paramName,"=",bestParam), pos=3)
+  return(bestParam)
 }
 ```
 And here is optimal *k* found by LOO:
 > **kNN + LOO chart**
-> 
+
+
+
 ## k **weighted** nearest neighbor algorithm
 ![kwNN](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2012-56-36.png?raw=true)
 
