@@ -1,4 +1,4 @@
-# Similarity-based classifiers. Nearest neighbors classifiers
+# Similarity-based classifiers. Nearest neighbor classifiers
 
 > **Similarity-based classifiers** estimate the class label of a test sample based on the similarities between
 the test sample and a set of labeled training samples, and the pairwise similarities between the
@@ -9,20 +9,29 @@ may be asymmetric and fail to satisfy the other mathematical properties required
 products.
 > A popular approach to similarity-based classification is to treat the given dissimilarities as distances in some Euclidean space.
 
+> **Nearest neighbor classifiers**
+Algorithm takes training sample *X^l*, object *u* that needs to be classified and optionally some parameters for weight funcion as input and outputs label (class) predicted for *u*. Algorithm sorts trainig sample by distance (similarity) to classified object in ascending order (so objects from trainig set with less *i* are closer to *u*). Object label is found as an argument that maximizes the sum of weight functions:
 
-Далее рассматриваются и сравниваются следующие метрические классификаторы реализованные на языке **R**:
+[!nn]()
 
- 1. Метод k ближайших соседей
-	 - Метод взвешенных ближайших соседей
- 2. Метод парзеновского окна
-	 - Метод парзеновского окна с переменной шириной окна
- 2. Метод потенциальных функций
+As calculations are delayed until *u* is known nearest neighbor classifier refers to *lazy learning* methods. Varying the weight function different similarity-based classifiers can be obtained.
 
-Рассматривается алгоритм отбара эталонных объектов STOLP.
-Оптимальные параметры алгоритмов обучения подбираются по критерию скользящего контроля LOO (leave one out). Также кросс-контроль LOO применяется для эмпирического оценивания (generalization ability, generalization performance) алгоритмов.
+Some of them will be considered here:
 
-## k nearest neighbors algorithm
-На вход алгоритма подается обучающая выборка, классифицируемый объект ***u*** и параметр ***k***. Алгоритм сортирует обучающую выборку по возрастанию расстояния до ***u*** , т.е. вычисления откладываются до момента, пока не станет известен классифицируемый объект ***u***. Такие алгоритмы относятся к методам ленивого обучения (lazy learning). Объекту присваивается класс, к которому относится большинство ближайших соседей (целесообразно выбирать нечетное k).
+ 1. k nearest neighbor algorithm
+	 - k weighted nearest neighbor algorithm
+ 2. Parzen window algorithm
+	 - Parzen window algorithm with variable window width
+ 3. Potential funcion algorithm
+
+Algorithms will be tested on standard **R** *iris* data set (Fisher's Iris data set). For simplicity and convinient graphical representableness only sepal width and sepal length features are considered as best separating the data set.
+
+Also data compression methods will be observed by the example of STOLP algorithm.
+At the end presented algorithms are compared in terms of generalization performance.
+
+## k nearest neighbor algorithm
+Parameter k is introduced and weight function looks like this:
+*ω(i, u) = [i <= k]*. It means it returns 1 if i is less or equal to k and 0 otherwise.
 
 ![kNN](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2012-21-22.png?raw=true)
 
@@ -85,7 +94,7 @@ LOO <- function(classifier, k, h){
 And here is optimal *k* found by LOO:
 > **kNN + LOO chart**
 > 
-## k **weighted** nearest neighbors algorithm
+## k **weighted** nearest neighbor algorithm
 ![kwNN](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2012-56-36.png?raw=true)
 
 > *ω(i)* is a monotonically decreasing sequence of real-number weights, specifying contribution of *i-th* neighbor in *u* classification.
@@ -122,3 +131,57 @@ Here optimal *h* is found using LOO:
 > **Parzen window + LOO chart**
 
 ## Potential function algorithm
+It's just a slight modification of parzen window algorithm:
+
+[!potential](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2013-40-38.png)
+
+Now window width *h* depends on training object *x*. *γ* represents
+importance of each such object.
+
+All these *2l* params can be obtained/adjusted with the following
+procedure:
+
+> **potential functions params lookup procedure**
+
+Though this process on a sufficiently big sample can take considerable
+amount of time.
+
+> **potential functions params lookup results**
+
+## STOLP algorithm
+This algorithm implements data set compression by finding regular (etalon)
+objects (stolps) and removing objects which do not or harmfully affect classification from sample.
+To explain how this algorithm works idea of *margin* has to be introduced.
+> **Margin** of an object (*M(x)*) shows us, how deeply current object lies within its class.
+[!margin](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%from%2017-12-16%15-07-53.png)
+
+Here is **R** implementation of STOLP algorithm, where **LDK:LKJ:GLDKJ:LSJ** is margin:
+```R
+STOLP <- function(set, threshold, err, metric = dst1, method = 'knn', k, h = 1, ker = ker1){
+  rowsNum <- dim(set)[1]
+  varsNum <- dim(set)[2]-1
+  toDelete = numeric()
+  labelsNum = levels(set[rowsNum,varsNum+1])
+  maxRes = numeric(labelsNum)
+  maxLabel = numeric(labelsNum)
+  
+  for(i in rowsNum:1){
+    res = metricClassifier(set, set[i, 1:varsNum], metric, method, k, h, ker)
+    if(res[1] != set[i, varsNum+1]){
+      toDelete <- c(toDelete, i)
+    }
+    else if(res[2] > maxRes[res[1]]){
+      maxRes[res[1]] = res[2]
+      maxLabel[res[1]] = i
+    }
+  }
+  resSet = set[-toDelete, ]
+  return(resSet)
+}
+```
+
+> **STOLP incorporated in nearest neighbor classification**
+
+## Conclusion
+
+> **charts representing algorithms comparison**
