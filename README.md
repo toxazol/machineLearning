@@ -112,9 +112,10 @@ LOO <- function(classifier, dataSet, paramName, paramRange){
   return(bestParam)
 }
 ```
+
 And here is optimal *k* found by LOO:
-![LOOkNNplot](https://github.com/toxazol/machineLearning/blob/master/img/LOOkNN.png)
-![kNNplot](https://github.com/toxazol/machineLearning/blob/master/img/kNN19.png?raw=true)
+
+![LOOkNNplot](https://github.com/toxazol/machineLearning/blob/master/img/LOOkNN.png)![kNNplot](https://github.com/toxazol/machineLearning/blob/master/img/kNN19.png?raw=true)
 
 
 
