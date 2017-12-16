@@ -7,7 +7,7 @@ training samples.
 > Similarity functions `ρ(x;y)`
 may be asymmetric and fail to satisfy the other mathematical properties required for metrics or inner
 products.
-> A popular approach to similarity-based classification is to treat the given dissimilarities as distances in some Euclidean space. 
+> A popular approach to similarity-based classification is to treat the given dissimilarities as distances in some Euclidean space.
 
 
 Далее рассматриваются и сравниваются следующие метрические классификаторы реализованные на языке **R**:
