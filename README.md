@@ -113,7 +113,8 @@ LOO <- function(classifier, dataSet, paramName, paramRange){
 }
 ```
 And here is optimal *k* found by LOO:
-> **kNN + LOO chart**
+![LOOkNNplot](https://github.com/toxazol/machineLearning/blob/master/img/LOOkNN.png)
+![kNNplot](https://github.com/toxazol/machineLearning/blob/master/img/kNN19.png?raw=true)
 
 
 
