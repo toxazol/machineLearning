@@ -1,18 +1,17 @@
-# Метрические классификаторы
+# Similarity-based classifiers. Nearest neighbors classifiers
 
-> **Метрический классификатор** (similarity-based classifier) — алгоритм классификации, основанный на вычислении оценок сходства между
-> объектами. Понятие сходства формализуется путем введения функции
-> расстояния `ρ(x;y)` (не обязательно метрики - например, допустимо
-> нарушение аксиомы треугольника). 
+> **Similarity-based classifiers** estimate the class label of a test sample based on the similarities between
+the test sample and a set of labeled training samples, and the pairwise similarities between the
+training samples. 
+> Similarity functions `ρ(x;y)`
+may be asymmetric and fail to satisfy the other mathematical properties required for metrics or inner
+products.
+> A popular approach to similarity-based classification is to treat the given dissimilarities as distances in some Euclidean space. 
 
-
-> Метрические классификаторы опираются на **гипотезу компактности**, которая
-> предполагает, что схожие объекты чаще лежат в одном классе, чем в
-> разных.
 
 Далее рассматриваются и сравниваются следующие метрические классификаторы реализованные на языке **R**:
 
- - Метод ближайших соседей
+ - Метод k ближайших соседей
 	 - Метод взвешенных ближайших соседей
  - Метод парзеновского окна
 	 - Метод парзеновского окна с переменной шириной окна
@@ -97,6 +96,7 @@ Such sequence can be obtained as geometric sequence with scale factor *q*. Where
 
 ## Parzen window algorithm
 Let' s define *ω(i, u)* as a function of distance rather than neighbor rank.
+
 ![parzenw](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2013-27-53.png?raw=true) 
 
 where *K(z)* is  nonincreasing on [0, ∞)  kernel function. Then our metric classifier will look like this:
@@ -120,4 +120,4 @@ Here optimal *h* is found using LOO:
 
 > **Parzen window + LOO chart**
 
-##Potential function algorithm
+## Potential function algorithm
