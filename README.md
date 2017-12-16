@@ -3,6 +3,7 @@
 > **Similarity-based classifiers** estimate the class label of a test sample based on the similarities between
 the test sample and a set of labeled training samples, and the pairwise similarities between the
 training samples. 
+
 > Similarity functions `ρ(x;y)`
 may be asymmetric and fail to satisfy the other mathematical properties required for metrics or inner
 products.
@@ -11,11 +12,11 @@ products.
 
 Далее рассматриваются и сравниваются следующие метрические классификаторы реализованные на языке **R**:
 
- - Метод k ближайших соседей
+ 1. Метод k ближайших соседей
 	 - Метод взвешенных ближайших соседей
- - Метод парзеновского окна
+ 2. Метод парзеновского окна
 	 - Метод парзеновского окна с переменной шириной окна
- - Метод потенциальных функций
+ 2. Метод потенциальных функций
 
 Рассматривается алгоритм отбара эталонных объектов STOLP.
 Оптимальные параметры алгоритмов обучения подбираются по критерию скользящего контроля LOO (leave one out). Также кросс-контроль LOO применяется для эмпирического оценивания (generalization ability, generalization performance) алгоритмов.
