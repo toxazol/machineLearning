@@ -103,4 +103,40 @@ LOO <- function(classifier, k, h){
   return(error/total)
 }
 ```
+And here is optimal *k* found by LOO:
+> **kNN + LOO chart**
+> 
 ### k weighted nearest neighbors algorithm
+![kwNN](https://github.com/toxazol/machineLearning/blob/master/formulas/Screenshot%20from%202017-12-16%2012-56-36.png?raw=true)
+
+> *ω(i)* is a monotonically decreasing sequence of real-number weights, specifying contribution of *i-th* neighbor in *u* classification.
+
+Such sequence can be obtained as geometric sequence with scale factor *q*. Where optimal *q* is found by minimizing risk with LOO.
+
+> **kwNN + LOO chart**
+
+##Parzen window algorithm
+Let' s define *ω(i, u)* as a function of distance rather than neighbor rank.
+![parzenw](https://github.com/toxazol/machineLearning/blob/master/formulas/Screenshot%20from%202017-12-16%2013-27-53.png?raw=true) 
+where *K(z)* is  nonincreasing on [0, ∞)  kernel function. Then our metric classifier will look like this:
+
+![parzen](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2013-31-51.png?raw=true)
+
+This is how kernel functions graphs look like:
+![kernels](https://github.com/toxazol/machineLearning/blob/master/img/main-qimg-ece54bb2db23a4f823e3fdb6058761e8.png?raw=true)
+
+Here are some of them implemented in *R*:
+```R
+ker1 <- (function(r) max(0.75*(1-r*r),0)) # epanechnikov
+ker2 <- (function(r) max(0,9375*(1-r*r),0)) # quartic
+ker3 <- (function(r) max(1-abs(r),0)) # triangle
+ker4 <- (function(r) ((2*pi)^(-0.5))*exp(-0.5*r*r)) # gaussian
+ker5 <- (function(r) ifelse(abs(r)<=1, 0.5, 0)) # uniform
+```
+
+Parameter *h* is called "window width" and is similar to number of neighbors *k* in kNN.
+Here optimal *h* is found using LOO:
+
+> **Parzen window + LOO chart**
+
+##Potential function algorithm
