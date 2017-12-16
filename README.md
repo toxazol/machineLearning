@@ -133,7 +133,7 @@ Here optimal *h* is found using LOO:
 ## Potential function algorithm
 It's just a slight modification of parzen window algorithm:
 
-[!potential](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2013-40-38.png)
+![potential](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%20from%202017-12-16%2013-40-38.png)
 
 Now window width *h* depends on training object *x*. *γ* represents
 importance of each such object.
