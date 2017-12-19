@@ -24,8 +24,7 @@ Some of them will be considered here:
 	 - Parzen window algorithm with variable window width
  3. Potential funcion algorithm
 
-Algorithms will be tested on standard **R** *iris* data set (Fisher's Iris data set). To provide convinient graphical representation only sepal width and sepal length features are plotted as best separating the data set.
-However algorithms are tested on a full feature set.
+Algorithms will be tested on standard **R** *iris* data set (Fisher's Iris data set). For simplicity and to provide convinient graphical representation only sepal width and sepal length features are considered as best separating the data set.
 
 Also data compression methods will be observed by the example of STOLP algorithm.
 At the end presented algorithms are compared in terms of generalization performance.
@@ -124,7 +123,7 @@ And here is optimal *k* found by LOO:
 
 > *ω(i)* is a monotonically decreasing sequence of real-number weights, specifying contribution of *i-th* neighbor in *u* classification.
 
-Such sequence can be obtained as geometric sequence with scale factor *q*. Where optimal *q* is found by minimizing risk with LOO.
+Such sequence can be obtained as geometric sequence with scale factor *q<1*. Where optimal *q* is found by minimizing empirical risk with LOO.
 
 > **kwNN + LOO chart**
 
@@ -154,6 +153,8 @@ Parameter *h* is called "window width" and is similar to number of neighbors *k*
 Here optimal *h* is found using LOO:
 
 > **Parzen window + LOO chart**
+
+> **Parzen window with varible window width** + modifications to parzen window
 
 ## Potential function algorithm
 It's just a slight modification of parzen window algorithm:
