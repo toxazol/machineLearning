@@ -1,10 +1,4 @@
 norm <- (function(x) if(!is.factor(x))(x-min(x))/(max(x)-min(x)) else x)
-sortByDist <- function(set, x, n, m, dist){
-  distances <- data.frame(set[,m+1])
-  for(i in 1:n)
-    distances[i, 2] <- dist(set[i, 1:m], x)
-  return(distances[order(distances[, 2]), ])
-}
 dst1 <- (function(a,b) dist(rbind(a, b))) # euclidian 
 dst2 <- (function(a,b) sum((a-b)^2)) # euclidian squared
 ker1 <- (function(r) max(0.75*(1-r*r),0)) # epanechnikov
@@ -12,7 +6,12 @@ ker2 <- (function(r) max(0,9375*(1-r*r),0)) # quartic
 ker3 <- (function(r) max(1-abs(r),0)) # triangle
 ker4 <- (function(r) ((2*pi)^(-0.5))*exp(-0.5*r*r)) # gaussian
 ker5 <- (function(r) ifelse(abs(r)<=1, 0.5, 0)) # uniform
-
+sortByDist <- function(set, x, n, m, dist){
+  distances <- data.frame(set[,m+1])
+  for(i in 1:n)
+    distances[i, 2] <- dist(set[i, 1:m], x)
+  return(distances[order(distances[, 2]), ])
+}
 # nearest neighbor classifers main params:
 # trainSet - data frame with rows representing training objects
 # each column represents some numerical feature, last column is label factor
@@ -22,33 +21,27 @@ kNNClassifier <- function(trainSet, u, metric = dst1, k){
   rowsNum <- dim(trainSet)[1]; varsNum <- dim(trainSet)[2]-1
   labels = levels(trainSet[rowsNum, varsNum+1])
   orderedDist <- sortByDist(trainSet, u, rowsNum, varsNum, metric)
-  
-  repeat{
-    kNNeighbors <- orderedDist[1:k-1,1]
-    lst <- orderedDist[k,2]
-    kNNeighbors <- unlist(list(kNNeighbors, orderedDist[orderedDist$V2==lst,1])) # count neighbours \w same dst as lst
-    countTable <- table(kNNeighbors)
-    if(length(countTable[countTable == max(countTable)])==1)
-      return(c(labels[which.max(countTable)], abs(max(countTable)-max(countTable[countTable!=max(countTable)]))))
-    k = k-1
-  }
+  kNNeighbors <- orderedDist[1:k,1]
+  lst <- orderedDist[k,2]
+  countTable <- table(kNNeighbors)
+  maxLabelIdx = which.max(countTable)
+  return(c(labels[maxLabelIdx], abs(max(countTable)-max(countTable[-maxLabelIdx]))))
 }
 kWNNClassifier <- function(trainSet, u, metric = dst1, k, q){
   rowsNum <- dim(trainSet)[1]; varsNum <- dim(trainSet)[2]-1
   labels = levels(trainSet[rowsNum, varsNum+1])
   orderedDist <- sortByDist(trainSet, u, rowsNum, varsNum, metric)
-  
   labelCount = numeric(length(labels))
   for(i in 1:k){
     labelCount[orderedDist[i,1]] = labelCount[orderedDist[i,1]] + q**(i-1)
   }
-  return(c(labels[which.max(labelCount)], abs(max(labelCount)-max(labelCount[labelCount!=max(labelCount)]))))
+  maxLabelIdx = which.max(labelCount)
+  return(c(labels[maxLabelIdx], abs(max(labelCount)-max(labelCount[-maxLabelIdx]))))
 }
 parzenClassifier <- function(trainSet, u, metric = dst1, h=0, k=NA, ker = ker1){
   rowsNum <- dim(trainSet)[1]; varsNum <- dim(trainSet)[2]-1
   labels = levels(trainSet[rowsNum, varsNum+1])
   orderedDist <- sortByDist(trainSet, u, rowsNum, varsNum, metric)
-  
   if(!is.na(k)){
     while(h==0){
       h = orderedDist[k+1, 2]
@@ -59,7 +52,8 @@ parzenClassifier <- function(trainSet, u, metric = dst1, h=0, k=NA, ker = ker1){
   for(i in 1:rowsNum){
     labelCount[orderedDist[i,1]] = labelCount[orderedDist[i,1]] + ker(orderedDist[i, 2]/h)
   }
-  return(c(labels[which.max(labelCount)], max(labelCount)))
+  maxLabelIdx = which.max(labelCount)
+  return(c(labels[maxLabelIdx], abs(max(labelCount)-max(labelCount[-maxLabelIdx]))))
 }
 potentialClassifier <- function(trainSet, u, hyParams, metric = dst1, ker = ker1){
   rowsNum <- dim(trainSet)[1]; varsNum <- dim(trainSet)[2]-1
@@ -71,7 +65,8 @@ potentialClassifier <- function(trainSet, u, hyParams, metric = dst1, ker = ker1
     j = as.numeric(row.names(orderedDist[i,]))
     labelCount[orderedDist[i,1]] = labelCount[orderedDist[i,1]] + hyParams[j,2]*ker(orderedDist[i, 2]/hyParams[j,1])
   }
-  return(c(labels[which.max(labelCount)], max(labelCount)))
+  maxLabelIdx = which.max(labelCount)
+  return(c(labels[maxLabelIdx], abs(max(labelCount)-max(labelCount[-maxLabelIdx]))))
 }
 
 potentialParamsFinder <- function(dataSet){
@@ -123,34 +118,38 @@ STOLP <- function(set, threshold, classifier, argsList){
   rowsNum <- dim(set)[1]
   varsNum <- dim(set)[2]-1
   toDelete = numeric()
-  labels = levels(set[rowsNum,varsNum+1])
-  maxRes = rep(0, length(labels)); names(maxRes)<-labels
-  maxLabel = rep(0, length(labels)); names(maxLabel)<-labels
-  
   for(i in 1:rowsNum){
     currentArgs = c(list(set, set[i, 1:varsNum]),argsList)
     res = do.call(classifier,currentArgs)
     if(res[1] != set[i, varsNum+1]){
       toDelete <- c(toDelete, i)
     }
-    else if(res[2] > maxRes[res[1]]){
+  }
+  points(set[toDelete,], pch=21, bg='grey', col='grey') # debug
+  set = set[-toDelete, ]; rowsNum = rowsNum - length(toDelete)
+  labels = levels(set[rowsNum,varsNum+1])
+  maxRes = rep(0, length(labels)); names(maxRes)<-labels
+  maxLabel = rep(0, length(labels)); names(maxLabel)<-labels
+  for(i in 1:rowsNum){
+    currentArgs = c(list(set, set[i, 1:varsNum]),argsList)
+    res = do.call(classifier,currentArgs)
+    if(res[2] > maxRes[res[1]]){
       maxRes[res[1]] = res[2]
       maxLabel[res[1]] = i
     }
   }
-  #points(set[toDelete,], pch=21, bg='grey', col='grey') # debug
-  set = set[-toDelete, ]; rowsNum = rowsNum - length(toDelete)
   regular = set[maxLabel, ]
   points(regular, pch=21, bg=colors2[regular$Species], col=colors2[regular$Species])
   repeat{
-    errCount = 0; toAdd = 0; maxMargin = 0
+    errCount = 0L; toAdd = 0L; maxAbsMargin = -1
     for(i in 1:rowsNum){
       currentArgs = c(list(regular, set[i, 1:varsNum]),argsList)
       res = do.call(classifier,currentArgs)
       if(res[1] != set[i, varsNum+1]){
         errCount = errCount + 1
-        if(res[2] > maxMargin)
-          toAdd = i
+        if(as.double(res[2]) > maxAbsMargin)
+          toAdd <- i
+          maxAbsMargin <- as.double(res[2])
       }
     }
     if(errCount <= threshold)
@@ -166,7 +165,7 @@ mapIris <- function(classifier, argsList){
   ySteps = seq(0.1,2.5,0.1)
   for(x in xSteps)
     for(y in ySteps){
-      currentArgs = c(list(iris[,3:5], c(x,y)), argsList)
+      currentArgs = c(list(u=c(x,y)), argsList)
       lbl = do.call(classifier, currentArgs)
       points(x, y, bg=colors2[lbl], col=colors2[lbl])
     }
@@ -174,10 +173,10 @@ mapIris <- function(classifier, argsList){
 
 colors1 <- c("setosa"="#FF000044", "versicolor"="#00FF0044", "virginica"="#0000FF44")
 colors2 <- c("setosa" = "#FF000088", "versicolor" = "#00FF0088", "virginica" = "#0000FF88")
-#irisPetals = STOLP(iris[,3:5],0,0, k=5) # = as.data.frame(lapply(iris[,3:5], norm))
-#mapIris()
-#LOO(kWNNClassifier, list(k=6), iris[,3:5], "q", seq(0.01,0.1,0.01))
-etalons = STOLP(iris[,3:5], 1, kNNClassifier, list(k=6))
+#as.data.frame(lapply(iris[,3:5], norm))
+#LOO(kWNNClassifier, list(k=6), iris[,3:5], "q", seq(0.6,0.9,0.05))
+#etalons = STOLP(iris[,3:5], 1, kNNClassifier, list(k=6))
+mapIris(parzenClassifier, list(ker=ker5, k=1, trainSet=iris[,3:5]))
 
 
 
