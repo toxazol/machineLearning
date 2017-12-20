@@ -19,9 +19,9 @@ As calculations are delayed until *u* is known nearest neighbor classifier is co
 Some of them are observed in this research:
 
  1. k nearest neighbor algorithm
-	 - k weighted nearest neighbor algorithm
+   - k weighted nearest neighbor algorithm
  2. Parzen window algorithm
-	 - Parzen window algorithm with variable window width
+   - Parzen window algorithm with variable window width
  3. Potential funcion algorithm
 
 Algorithms are tested on standard **R** *iris* data set (Fisher's Iris data set). Plots are presented in petal.length, petal.width coordinate space
@@ -263,13 +263,13 @@ Here are STOLP compression results for kNN, kWNN, parzen windowss algorithms res
 
 Here is a summary of results obtained by LOO for different algorithms on *iris* data set:
 
-| algorithm | best parameter | errors | empirical risk |
-| ------ | --------- |--------|----- |
-| kNN (4 features)   | best k: 19|3|0.02|
-| kNN (2 features) | best k: 6|5|0.0(3)|
-|kWNN|best q: 0.6|6|0.04|
-|parzen window (epanechnikov kernel, 4 features)    | best h: 0.8 |5|0.0(3)|
-|parzen window (first 3 kernels, 2 features) |best h: 0.4|6|0.04|
-|parzen window (gaussian kernel)|best h: 0.02|5|0.0(3)|
-|parzen window /w variable window (gaussian kernel)|best k: 1|6|0.04|
-|parzen window /w variable window (uniform kernel)|best k: 1|5|0.0(3)|
+| algorithm                                        | best parameter | errors | empirical risk |
+| -------------------------------------------------|--------------- |--------|----------------|
+| kNN (4 features)                                 |      best k: 19|       3|            0.02|
+| kNN (2 features)                                 |       best k: 6|       5|          0.0(3)|
+|parzen window (epanechnikov kernel, 4 features)   |    best h: 0.8 |       5|          0.0(3)|
+|parzen window (gaussian kernel)                   |    best h: 0.02|       5|          0.0(3)|
+|parzen window /w variable window (uniform kernel) |       best k: 1|       5|          0.0(3)|
+|parzen window /w variable window (gaussian kernel)|       best k: 1|       6|            0.04|
+|parzen window (first 3 kernels, 2 features)       |     best h: 0.4|       6|            0.04|
+| kWNN                                             |     best q: 0.6|       6|            0.04|

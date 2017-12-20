@@ -92,7 +92,7 @@ LOO <- function(classifier, classifierArgs, dataSet, paramName, paramRange){
   for(param in paramRange){
     err = 0
     for(i in 1:rows){
-      currentArgs = c(list(dataSet[-i, ], dataSet[i, 1:cols]),classifierArgs)
+      currentArgs = c(list(u=dataSet[i, 1:cols]),classifierArgs)
       currentArgs[paramName] = param
       class <- do.call(classifier, currentArgs)[1]
       if(class != dataSet[i,cols+1])
@@ -176,11 +176,11 @@ mapIris <- function(classifier, argsList){
 colors1 <- c("setosa"="#FF000044", "versicolor"="#00FF0044", "virginica"="#0000FF44")
 colors2 <- c("setosa" = "#FF000088", "versicolor" = "#00FF0088", "virginica" = "#0000FF88")
 #as.data.frame(lapply(iris[,3:5], norm))
-LOO(parzenClassifier, list(ker=ker4), iris[,3:5], "h", seq(0.01,0.1,0.01))
-#etalons = STOLP(iris[,3:5], 1, parzenClassifier, list(h=0.4))
+#LOO(parzenClassifier, list(ker=ker4), iris[,3:5], "h", seq(0.01,0.1,0.01))
+etalons = STOLP(iris[,3:5], 1, kNNClassifier, list(k=6))
 
-#mapIris(parzenClassifier, list(h=0.02, ker=ker4, trainSet=iris[,3:5]))
-
+#mapIris((parzenClassifier, list(h=, ker=ker4, trainSet=cbind(iris[,1:2],iris[,5]))
+LOO(kNNClassifier, list(trainSet=etalons), iris[,3:5], "k", 6:6)
 
 
 
