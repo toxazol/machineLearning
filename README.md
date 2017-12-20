@@ -261,15 +261,15 @@ Here are STOLP compression results for kNN, kWNN, parzen windowss algorithms res
 
 ## Conclusion
 
-Here is a summary of results obtained by LOO for different algorithms:
+Here is a summary of results obtained by LOO for different algorithms on *iris* data set:
 
 | Option | bestParam | errors | risk |
 | ------ | --------- |--------|----- |
-| kNN4   | best k: 19|3|0.02|
-| kNN2 | best k: 6|5|0.0(3)|
-|kWNN2|best q: 0.6|6|0.04|
-| ker1parzen4    | best h: 0.8 |6|0.0(3)|
-|ker1parzen2 = ker2parzen2 = ker3parzen2 |best h: 0.4|6|0.04|
-|ker4parzen2|best h: 0.02|6|0.0(3)|
-|ker4parzenVariable2|best k: 1|6|0.04|
-|ker5parzenVariable2|best k: 1|5|0.0(3)|
+| kNN (4 features)   | best k: 19|3|0.02|
+| kNN (2 features) | best k: 6|5|0.0(3)|
+|kWNN|best q: 0.6|6|0.04|
+|parzen window (epanechnikov kernel, 4 features)    | best h: 0.8 |6|0.0(3)|
+|parzen window (first 3 kernels, 2 features) |best h: 0.4|6|0.04|
+|parzen window (gaussian kernel)|best h: 0.02|6|0.0(3)|
+|parzen window /w variable window (gaussian kernel)|best k: 1|6|0.04|
+|parzen window /w variable window (uniform kernel)|best k: 1|5|0.0(3)|
