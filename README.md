@@ -141,26 +141,24 @@ ker5 <- (function(r) ifelse(abs(r)<=1, 0.5, 0)) # uniform
 ```
 
 Parameter *h* is called "window width" and is similar to number of neighbors *k* in kNN.
+Here optimal *h* is found using LOO (epanechnikov kernel, sepal.width & sepal.length only): 
 
-Here optimal *h* is found using LOO:
-
-epanechnikov kernel, sepal.width & sepal.length only: 
 ![LOOker1parzen2](https://github.com/toxazol/machineLearning/blob/master/img/LOOker1parzen2.png?raw=true)
-
 all four features:
+
 ![LOOker1parzen4](https://github.com/toxazol/machineLearning/blob/master/img/LOOker1parzen4.png?raw=true)
-
 triangle kernel, h=0.4:
-![h04ker3parzen2](https://github.com/toxazol/machineLearning/blob/master/img/h04ker3parzen2.png?raw=true)
 
+![h04ker3parzen2](https://github.com/toxazol/machineLearning/blob/master/img/h04ker3parzen2.png?raw=true)
 gaussian kernel, h=0.1:
+
 ![h01ker4parzen2](https://github.com/toxazol/machineLearning/blob/master/img/h01ker4parzen2.png?raw=true)
 
 
 Parzen window algorithm can be modified to suit case-based reasoning better.
 It's what we call **parzen window algorithm with variable window width**.
 Let *h* be equal to the distance to *k+1* nearest neighbor.
-Here is comparison of parzen windows classifiers (uniform kernel) without and with variable window width modification applied:
+Here is comparison of parzen window classifier (uniform kernel) without and with variable window width modification applied:
 
 ![parzenKer5](https://github.com/toxazol/machineLearning/blob/master/img/parzenKer5.png?raw=true)
 ![parzenKer5Var](https://github.com/toxazol/machineLearning/blob/master/img/parzenKer5Var.png?raw=true)
