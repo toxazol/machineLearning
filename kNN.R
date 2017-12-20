@@ -175,8 +175,8 @@ colors1 <- c("setosa"="#FF000044", "versicolor"="#00FF0044", "virginica"="#0000F
 colors2 <- c("setosa" = "#FF000088", "versicolor" = "#00FF0088", "virginica" = "#0000FF88")
 #as.data.frame(lapply(iris[,3:5], norm))
 #LOO(kWNNClassifier, list(k=6), iris[,3:5], "q", seq(0.6,0.9,0.05))
-#etalons = STOLP(iris[,3:5], 1, kNNClassifier, list(k=6))
-mapIris(parzenClassifier, list(ker=ker5, k=1, trainSet=iris[,3:5]))
+etalons = STOLP(iris[,3:5], 1, kWNNClassifier, list(k=6,q=0.6))
+#mapIris(parzenClassifier, list(ker=ker5, k=1, trainSet=iris[,3:5]))
 
 
 

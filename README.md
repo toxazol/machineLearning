@@ -200,7 +200,7 @@ This algorithm implements data set compression by finding regular (etalon)
 objects (stolps) and removing objects which do not or harmfully affect classification from sample.
 To explain how this algorithm works idea of *margin* has to be introduced.
 > **Margin** of an object (*M(x)*) shows us, how deeply current object lies within its class.
-[!margin](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%from%2017-12-16%15-07-53.png)
+![margin](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%from%2017-12-16%15-07-53.png)
 
 Here is **R** implementation of STOLP algorithm:
 ```R
@@ -252,7 +252,12 @@ STOLP <- function(set, threshold, classifier, argsList){
 }
 ```
 
-> **STOLP incorporated in nearest neighbor classification**
+Here are STOLP compression results for kNN, kWNN, parzen windowss algorithms respectively:
+
+![stolpKnn](https://github.com/toxazol/machineLearning/blob/master/img/stolpKnn.png)
+![stolpKwnn](https://github.com/toxazol/machineLearning/blob/master/img/stolpKwnn.png)
+![stolpParzen](https://github.com/toxazol/machineLearning/blob/master/img/stolpParzen.png)
+
 
 ## Conclusion
 
