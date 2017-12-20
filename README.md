@@ -263,7 +263,7 @@ Here are STOLP compression results for kNN, kWNN, parzen windowss algorithms res
 
 Here is a summary of results obtained by LOO for different algorithms on *iris* data set:
 
-| Option | bestParam | errors | risk |
+| algorithm | best parameter | errors | empirical risk |
 | ------ | --------- |--------|----- |
 | kNN (4 features)   | best k: 19|3|0.02|
 | kNN (2 features) | best k: 6|5|0.0(3)|
