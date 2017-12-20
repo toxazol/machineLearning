@@ -141,13 +141,21 @@ ker5 <- (function(r) ifelse(abs(r)<=1, 0.5, 0)) # uniform
 ```
 
 Parameter *h* is called "window width" and is similar to number of neighbors *k* in kNN.
-Here optimal *h* is found using LOO (epanechnikov kernel, sepal.width & sepal.length only): ![LOOker1parzen2](https://github.com/toxazol/machineLearning/blob/master/img/LOOker1parzen2.png?raw=true){:style="float: right;margin-right: 7px;margin-top: 7px;"}
+Here optimal *h* is found using LOO (epanechnikov kernel, sepal.width & sepal.length only): 
 
-all four features: ![LOOker1parzen4](https://github.com/toxazol/machineLearning/blob/master/img/LOOker1parzen4.png?raw=true){:style="float: right;margin-right: 7px;margin-top: 7px;"}
+![LOOker1parzen2](https://github.com/toxazol/machineLearning/blob/master/img/LOOker1parzen2.png?raw=true)
 
-triangle kernel, h=0.4: ![h04ker3parzen2](https://github.com/toxazol/machineLearning/blob/master/img/h04ker3parzen2.png?raw=true){:style="float: right;margin-right: 7px;margin-top: 7px;"}
+all four features:
 
-gaussian kernel, h=0.1: ![h01ker4parzen2](https://github.com/toxazol/machineLearning/blob/master/img/h01ker4parzen2.png?raw=true){:style="float: right;margin-right: 7px;margin-top: 7px;"}
+![LOOker1parzen4](https://github.com/toxazol/machineLearning/blob/master/img/LOOker1parzen4.png?raw=true)
+
+triangle kernel, h=0.4:
+
+![h04ker3parzen2](https://github.com/toxazol/machineLearning/blob/master/img/h04ker3parzen2.png?raw=true)
+
+gaussian kernel, h=0.1:
+
+![h01ker4parzen2](https://github.com/toxazol/machineLearning/blob/master/img/h01ker4parzen2.png?raw=true)
 
 Parzen window algorithm can be modified to suit case-based reasoning better.
 It's what we call **parzen window algorithm with variable window width**.
