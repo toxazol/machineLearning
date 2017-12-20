@@ -268,8 +268,8 @@ Here is a summary of results obtained by LOO for different algorithms on *iris* 
 | kNN (4 features)   | best k: 19|3|0.02|
 | kNN (2 features) | best k: 6|5|0.0(3)|
 |kWNN|best q: 0.6|6|0.04|
-|parzen window (epanechnikov kernel, 4 features)    | best h: 0.8 |6|0.0(3)|
+|parzen window (epanechnikov kernel, 4 features)    | best h: 0.8 |5|0.0(3)|
 |parzen window (first 3 kernels, 2 features) |best h: 0.4|6|0.04|
-|parzen window (gaussian kernel)|best h: 0.02|6|0.0(3)|
+|parzen window (gaussian kernel)|best h: 0.02|5|0.0(3)|
 |parzen window /w variable window (gaussian kernel)|best k: 1|6|0.04|
 |parzen window /w variable window (uniform kernel)|best k: 1|5|0.0(3)|

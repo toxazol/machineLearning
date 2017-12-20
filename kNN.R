@@ -69,6 +69,8 @@ potentialClassifier <- function(trainSet, u, hyParams, metric = dst1, ker = ker1
   return(c(labels[maxLabelIdx], abs(max(labelCount)-max(labelCount[-maxLabelIdx]))))
 }
 
+
+
 potentialParamsFinder <- function(dataSet){
   n = dim(dataSet)[1]; m = dim(dataSet)[2]-1
   params = cbind(rep(1,n), rep(0,n))
@@ -174,9 +176,10 @@ mapIris <- function(classifier, argsList){
 colors1 <- c("setosa"="#FF000044", "versicolor"="#00FF0044", "virginica"="#0000FF44")
 colors2 <- c("setosa" = "#FF000088", "versicolor" = "#00FF0088", "virginica" = "#0000FF88")
 #as.data.frame(lapply(iris[,3:5], norm))
-#LOO(kWNNClassifier, list(k=6), iris[,3:5], "q", seq(0.6,0.9,0.05))
-etalons = STOLP(iris[,3:5], 1, parzenClassifier, list(h=0.4))
-mapIris(parzenClassifier, list(h=0.4, trainSet=etalons))
+LOO(parzenClassifier, list(ker=ker4), iris[,3:5], "h", seq(0.01,0.1,0.01))
+#etalons = STOLP(iris[,3:5], 1, parzenClassifier, list(h=0.4))
+
+#mapIris(parzenClassifier, list(h=0.02, ker=ker4, trainSet=iris[,3:5]))
 
 
 
