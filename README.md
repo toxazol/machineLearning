@@ -175,12 +175,25 @@ importance of each such object.
 All these *2l* params can be obtained/adjusted with the following
 procedure:
 
-> **potential functions params lookup procedure**
+```R
+potentialParamsFinder <- function(dataSet){
+  n = dim(dataSet)[1]; m = dim(dataSet)[2]-1
+  params = cbind(rep(1,n), rep(0,n))
+  for(i in 1:n){
+    repeat{
+      res = potentialClassifier(dataSet, dataSet[i, 1:m], params)[1]
+      if(res == dataSet[i,m+1]) break
+      params[i,2] = params[i,2] + 1
+    }
+  }
+  return(params)
+}
+```
 
 Though this process on a sufficiently big sample can take considerable
-amount of time.
+amount of time. Here is the result of found and applyied params:
 
-> **potential functions params lookup results**
+![potential](https://github.com/toxazol/machineLearning/blob/master/img/potential.png)
 
 ## STOLP algorithm
 This algorithm implements data set compression by finding regular (etalon)
@@ -189,28 +202,53 @@ To explain how this algorithm works idea of *margin* has to be introduced.
 > **Margin** of an object (*M(x)*) shows us, how deeply current object lies within its class.
 [!margin](https://github.com/toxazol/machineLearning/blob/master/img/Screenshot%from%2017-12-16%15-07-53.png)
 
-Here is **R** implementation of STOLP algorithm, where **LDK:LKJ:GLDKJ:LSJ** is margin:
+Here is **R** implementation of STOLP algorithm:
 ```R
-STOLP <- function(set, threshold, err, metric = dst1, method = 'knn', k, h = 1, ker = ker1){
+STOLP <- function(set, threshold, classifier, argsList){
+  plot(iris[,3:4], bg=colors2[iris$Species], col=colors2[iris$Species])
   rowsNum <- dim(set)[1]
   varsNum <- dim(set)[2]-1
   toDelete = numeric()
-  labelsNum = levels(set[rowsNum,varsNum+1])
-  maxRes = numeric(labelsNum)
-  maxLabel = numeric(labelsNum)
-  
-  for(i in rowsNum:1){
-    res = metricClassifier(set, set[i, 1:varsNum], metric, method, k, h, ker)
+  for(i in 1:rowsNum){
+    currentArgs = c(list(set, set[i, 1:varsNum]),argsList)
+    res = do.call(classifier,currentArgs)
     if(res[1] != set[i, varsNum+1]){
       toDelete <- c(toDelete, i)
     }
-    else if(res[2] > maxRes[res[1]]){
+  }
+  points(set[toDelete,], pch=21, bg='grey', col='grey') # debug
+  set = set[-toDelete, ]; rowsNum = rowsNum - length(toDelete)
+  labels = levels(set[rowsNum,varsNum+1])
+  maxRes = rep(0, length(labels)); names(maxRes)<-labels
+  maxLabel = rep(0, length(labels)); names(maxLabel)<-labels
+  for(i in 1:rowsNum){
+    currentArgs = c(list(set, set[i, 1:varsNum]),argsList)
+    res = do.call(classifier,currentArgs)
+    if(res[2] > maxRes[res[1]]){
       maxRes[res[1]] = res[2]
       maxLabel[res[1]] = i
     }
   }
-  resSet = set[-toDelete, ]
-  return(resSet)
+  regular = set[maxLabel, ]
+  points(regular, pch=21, bg=colors2[regular$Species], col=colors2[regular$Species])
+  repeat{
+    errCount = 0L; toAdd = 0L; maxAbsMargin = -1
+    for(i in 1:rowsNum){
+      currentArgs = c(list(regular, set[i, 1:varsNum]),argsList)
+      res = do.call(classifier,currentArgs)
+      if(res[1] != set[i, varsNum+1]){
+        errCount = errCount + 1
+        if(as.double(res[2]) > maxAbsMargin)
+          toAdd <- i
+          maxAbsMargin <- as.double(res[2])
+      }
+    }
+    if(errCount <= threshold)
+      return(regular)
+    newRegular = set[toAdd,]
+    regular = rbind(regular,newRegular)
+    points(newRegular, pch=21, bg=colors2[newRegular$Species], col=colors2[newRegular$Species])
+  }
 }
 ```
 
